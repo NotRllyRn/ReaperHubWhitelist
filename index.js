@@ -13,6 +13,7 @@ const client = new Client({
 const yaris = new Yaris(process.env.YARIS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const DiscordAllowed = { '900807147514904586': true }
 
 let dServer;
 
@@ -39,7 +40,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('ReaperOnTop');
 })
-app.post('/add', (req, res) => {
+app.post('/add', async (req, res) => {
     const hwid = getHWID(req)
     const uuid = await validUUID(req.body.uuid)
     const key = req.body.key
@@ -65,8 +66,6 @@ app.post('/add', (req, res) => {
 })
 app.listen(process.env.PORT)
 
-const DiscordAllowed = { '900807147514904586': true }
-
 const discord_commands = {
     ping: (msg) => {
         msg.reply('No')
@@ -90,6 +89,17 @@ const discord_commands = {
 
 client.on('ready', () => {
     console.log('ReaperOnTop')
+})
+
+client.on('messageCreate', (msg) => {
+    if (msg.author.bot) return;
+    const content = msg.content;
+    if (content.startsWith(process.env.PREFIX)) {
+        const [name, ...messages] = content.trim().substring(process.env.PREFIX.length).split(" ");
+        const args = [msg]
+        if (messages.length > 0) args.push(messages);
+        if (discord_commands[name]) discord_commands[name](...args);
+    }
 })
 
 client.login(process.env.DISCORD_TOKEN)
