@@ -1,0 +1,27 @@
+{
+  "name": "reaperhubwhitelist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NotRllyRn/ReaperHubWhitelist.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NotRllyRn/ReaperHubWhitelist/issues"
+  },
+  "homepage": "https://github.com/NotRllyRn/ReaperHubWhitelist#readme",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "yaris-wrapper": "^1.2.4"
+  }
+}
