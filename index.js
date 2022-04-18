@@ -13,7 +13,7 @@ const client = new Client({
 const yaris = new Yaris(process.env.YARIS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const DiscordAllowed = { '900807147514904586': true }
+const DiscordAllowed = { '900807147514904586': true, '422587947972427777': true }
 
 let dServer;
 
