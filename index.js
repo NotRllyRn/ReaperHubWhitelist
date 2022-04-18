@@ -55,7 +55,7 @@ app.post('/add', async (req, res) => {
                 tag: uuid,
                 data: hwid,
                 expires: '',
-                role: 'user'
+                role: 'Buyer'
             }).then(info => {
                 if (info && info.success) {
                     res.send({ message: 'successfully whitelisted.' })
@@ -70,9 +70,9 @@ const discord_commands = {
     ping: (msg) => {
         msg.reply('No')
     },
-    generateKey: async function (msg, args) {
+    generateKey: (msg, args) => {
         if (!DiscordAllowed[msg.author.id]) return msg.reply('Unauthorized.');
-        const uuid = args[0] || '';
+        const uuid = args && args[0] || '';
 
         yaris.addKey().then(info => {
             if (info && info.success) {
@@ -85,6 +85,109 @@ const discord_commands = {
             };
         });
     },
+    removeKey: (msg, args) => {
+        if (!DiscordAllowed[msg.author.id]) return msg.reply('Unauthorized.');
+        if (!args || args.length < 1) return msg.reply('Invalid arguments.');
+
+        yaris.removeKey(args[0]).then(info => {
+            if (info && info.success) {
+                msg.channel.send('Successfully removed key.')
+            } else {
+                msg.channel.send('Failed to remove key, error: ' + info.error.message)
+            };
+        })
+    },
+    removeUser: (msg, args) => {
+        if (!DiscordAllowed[msg.author.id]) return msg.reply('Unauthorized.');
+        if (!args || args.length < 3) return msg.reply('Invalid arguments.');
+
+        const [method, data, hashed] = [...args]
+        if (method == 'tag') {
+            yaris.removeUser({ tag: data }).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully removed user.')
+                } else {
+                    msg.channel.send('Failed to remove user, error: ' + info.error.message)
+                };
+            })
+        } else if (method == 'hwid') {
+            const push = {
+                data: data,
+            }
+            if (hashed && hashed.lower() == 'true') {
+                push.hashed = true
+            } else {
+                push.hashed = false
+            }
+            yaris.removeUser(push).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully removed user.')
+                } else {
+                    msg.channel.send('Failed to remove user, error: ' + info.error.message)
+                }
+            })
+        } else {
+            msg.reply('Invalid method.')
+        }
+    },
+    whitelistUser: (msg, args) => {
+        if (!DiscordAllowed[msg.author.id]) return msg.reply('Unauthorized.');
+        if (!args || args.length < 2) return msg.reply('Invalid arguments.');
+
+        const [hashed, data] = [...args]
+        if (hashed && hashed.lower() == 'true') {
+            yaris.whitelistUser({
+                data: data,
+                hashed: true
+            }).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully whitelisted user.')
+                } else {
+                    msg.channel.send('Failed to whitelist user, error: ' + info.error.message)
+                };
+            })
+        } else {
+            yaris.whitelistUser({
+                data: data,
+                hashed: false
+            }).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully whitelisted user.')
+                } else {
+                    msg.channel.send('Failed to whitelist user, error: ' + info.error.message)
+                };
+            })
+        }
+    },
+    blacklistUser: (msg, args) => {
+        if (!DiscordAllowed[msg.author.id]) return msg.reply('Unauthorized.');
+        if (!args || args.length < 2) return msg.reply('Invalid arguments.');
+
+        const [hashed, data] = [...args]
+        if (hashed && hashed.lower() == 'true') {
+            yaris.blacklistUser({
+                data: data,
+                hashed: true
+            }).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully blacklisted user.')
+                } else {
+                    msg.channel.send('Failed to blacklist user, error: ' + info.error.message)
+                };
+            })
+        } else {
+            yaris.blacklistUser({
+                data: data,
+                hashed: false
+            }).then(info => {
+                if (info && info.success) {
+                    msg.channel.send('Successfully blacklisted user.')
+                } else {
+                    msg.channel.send('Failed to blacklist user, error: ' + info.error.message)
+                };
+            })
+        }
+    }
 }
 
 client.on('ready', () => {
