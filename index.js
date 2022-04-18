@@ -89,6 +89,8 @@ const discord_commands = {
 
 client.on('ready', () => {
     console.log('ReaperOnTop')
+
+    dServer = client.guilds.cache.get('900812818947907614')
 })
 
 client.on('messageCreate', (msg) => {
